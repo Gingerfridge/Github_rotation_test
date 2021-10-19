@@ -7,4 +7,4 @@ First thing check that only this folder is being used for functions
 
 https://ubuntu.com/
 
-https://manual.gromacs.org/documentation/current/install-guide/index.html
+https://bioinformaticsreview.com/20151126/how-to-install-gromacs-5-x-x-on-linux-ubuntu-14-04-lts/
