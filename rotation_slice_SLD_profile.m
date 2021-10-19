@@ -11,9 +11,9 @@ function rotation_slice_SLD_profile()
 % once you have the gro files you want to analyse
 % % % % % %  no output list height_protein = rotation_of_protein_gro(step_rot_x,step_rot_y,protein_filename,protein_nickname,surface_filename,surface_nickname) %% all gro files
 
-Working_directory = 'C:\Users\mbcx4ph5\Dropbox (The University of Manchester)\PhD\RasCAL_2019\Fc_SO_i'
-data.protein_filename = "Fc_S.gro"
-data.protein_nickname = "FC_S" %%%NO NUMBERS IN THIS NAME
+Working_directory = 'C:\Users\mbcx4ph5\Dropbox (The University of Manchester)\PhD\RasCAL_2019\Fc_SO_ii'
+data.protein_filename = "Fc.gro"
+data.protein_nickname = "FC_" %%%NO NUMBERS IN THIS NAME
 data.surface_filename = "SO_2_5point5_align.gro"
 data.surface_nickname = "SO" %%%NO NUMBERS IN THIS NAME
 data.step_rot_x = 180
