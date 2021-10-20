@@ -1,4 +1,4 @@
-function [height_protein, List_of_files, List_of_files_rot,Loading_roation] = rotation_of_protein_gro(step_rot_x,step_rot_y,protein_filename_pre,protein_nickname,surface_filename,surface_nickname)
+function [height_protein, List_of_files, List_of_files_rot,Loading_roation,Output0] = rotation_of_protein_gro(step_rot_x,step_rot_y,protein_filename_pre,protein_nickname,surface_filename,surface_nickname,orientation_seed)
 %need to make this so it accepts a name rather than 
 % 08 10 2021 all gro files added (not checked)
 
@@ -13,6 +13,10 @@ function [height_protein, List_of_files, List_of_files_rot,Loading_roation] = ro
 % % % % surface_nickname = "SO_2"
 % Produce the different orientations. Then add the surface under the protein
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
+
+
+%Change this so it accepts a list of rotations and "frames" of a simulation
+
 x_rot = 0;
 y_rot = 0;
 z_rot = 0;
@@ -20,7 +24,7 @@ z_rot = 0;
 % % % step_rot_x = 120;
 % % % step_rot_y = 120;
 %MAKE SURE THE BOX OF THE GRO FILE IS SMALLEST
-protein_filename = [protein_filename_pre + "_min.gro"];
+protein_filename = [protein_filename_pre + "_min.gro"]
 [c,Output0] = system("wsl gmx editconf -f " + protein_filename_pre + " -o " + protein_filename + " -bt cubic -d 0 -center 0 0 0",'-echo')
 
 % 1135 141021 remove princ axis
@@ -28,21 +32,32 @@ protein_filename = [protein_filename_pre + "_min.gro"];
 
 
 %%%% need to write code that reads the box around the protein 
-for i = 0:180/step_rot_y
-    y_rot = i*step_rot_y;
-    for j = 0:180/step_rot_x % length of the list of values 
-        x_rot = j*step_rot_x;
-        %%%%need the gro file to have the z dimention in the 6th collumn 
-        [d,Output1] = system("wsl gmx editconf -f " + protein_filename + " -o " + protein_nickname + "_" + x_rot + "_" + y_rot + "_" + z_rot + ".gro -rotate " + x_rot + " " + y_rot + " " + z_rot );
-        z = importfile1_for_rot_gro(protein_nickname + "_" + x_rot + "_" + y_rot + "_" + z_rot + ".gro", 3, inf); %%%% GRO FUNCTION
-          height_protein(i+1,j+1) = max(z)-min(z);
-        pos = position_producer_gro(height_protein(i+1,j+1)); %%%% GRO FUNCTION
-        [e,Output2] = system("wsl gmx insert-molecules -f " + surface_filename +  " -ci " + protein_nickname + "_" + x_rot + "_" + y_rot + "_" + z_rot + ".gro -o " + surface_nickname +  "_" + protein_nickname + "_" + x_rot + "_" + y_rot + "_" + z_rot + ".gro -ip pos.dat -nmol 1 -rot none");       
-        List_of_files((j+1)+(180/step_rot_y)*i) = [surface_nickname + "_" + protein_nickname + "_" + x_rot + "_" + y_rot + "_" + z_rot + ".gro"] % this one to include the surface
-% % % % % %         List_of_files((j+1)+(180/step_rot_y)*i) = [protein_nickname + "_" + x_rot + "_" + y_rot + "_" + z_rot + ".gro"];
-        List_of_files_rot{(j+1)+(180/step_rot_y)*i} = [x_rot, y_rot, z_rot];
+%%%% for the length of a the string file 
+
+rotation_check = 1;
+if rotation_check == 1
+    Loading_roation = ["Loading " + "0" + "%"]
+    for k = 1:length(orientation_seed)
+%     for i = 0:180/step_rot_y
+%         y_rot = i*step_rot_y;
+%         for j = 0:180/step_rot_x % length of the list of values 
+%             x_rot = j*step_rot_x;
+            %%%%need the gro file to have the z dimention in the 6th collumn 
+            x_rot = orientation_seed(k,1);
+            y_rot = orientation_seed(k,2);
+            [d,Output1] = system("wsl gmx editconf -f " + protein_filename + " -o " + protein_nickname + "_" + x_rot + "_" + y_rot + "_" + z_rot + ".gro -rotate " + x_rot + " " + y_rot + " " + z_rot );
+            z = importfile1_for_rot_gro(protein_nickname + "_" + x_rot + "_" + y_rot + "_" + z_rot + ".gro", 3, inf); %%%% GRO FUNCTION
+              height_protein(k,1) = max(z)-min(z);
+            pos = position_producer_gro(height_protein(k,1)); %%%% GRO FUNCTION
+            [e,Output2] = system("wsl gmx insert-molecules -f " + surface_filename +  " -ci " + protein_nickname + "_" + x_rot + "_" + y_rot + "_" + z_rot + ".gro -o " + surface_nickname +  "_" + protein_nickname + "_" + x_rot + "_" + y_rot + "_" + z_rot + ".gro -ip pos.dat -nmol 1 -rot none");       
+            List_of_files(k) = [surface_nickname + "_" + protein_nickname + "_" + x_rot + "_" + y_rot + "_" + z_rot + ".gro"] % this one to include the surface
+    % % % % % %         List_of_files((j+1)+(180/step_rot_y)*i) = [protein_nickname + "_" + x_rot + "_" + y_rot + "_" + z_rot + ".gro"];
+            List_of_files_rot{k} = [x_rot, y_rot, z_rot];
+%         end
+        Loading_roation = ["Loading " + 100*k/length(orientation_seed) + "%"]
     end
-    Loading_roation = ["Loading " + 100*i/(180/step_rot_y) + "%"]
+else
+%%%%%%% add code for the simulation fitting     
 end
 
 

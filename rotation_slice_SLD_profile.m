@@ -13,7 +13,7 @@ function rotation_slice_SLD_profile()
 
 Working_directory = 'C:\Users\mbcx4ph5\Dropbox (The University of Manchester)\PhD\RasCAL_2019\Fc_SO_ii'
 data.protein_filename = "Fc.gro"
-data.protein_nickname = "FC_" %%%NO NUMBERS IN THIS NAME
+data.protein_nickname = "FC" %%%NO NUMBERS IN THIS NAME
 data.surface_filename = "SO_2_5point5_align.gro"
 data.surface_nickname = "SO" %%%NO NUMBERS IN THIS NAME
 data.step_rot_x = 180
@@ -21,7 +21,7 @@ data.step_rot_y = 180
 data.D2O_frac = [0; 0.08; 0.45; 0.97;0.98;0.99;1]; %%%% ADD which contrasts you have here (this will make it run much longer
 
 
-[height_protein, List_of_files, List_of_files_rot, Loading_roation] = rotation_of_protein_gro(data.step_rot_x,data.step_rot_y,data.protein_filename,data.protein_nickname,data.surface_filename,data.surface_nickname);
+[height_protein, List_of_files, List_of_files_rot, Loading_roation, Output0] = rotation_of_protein_gro(data.step_rot_x,data.step_rot_y,data.protein_filename,data.protein_nickname,data.surface_filename,data.surface_nickname,orientation_seed)
 
 save('height_protein.mat','height_protein')
 save('List_of_files.mat','List_of_files')
