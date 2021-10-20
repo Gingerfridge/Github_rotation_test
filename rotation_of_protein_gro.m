@@ -43,6 +43,8 @@ if rotation_check == 1
 %         for j = 0:180/step_rot_x % length of the list of values 
 %             x_rot = j*step_rot_x;
             %%%%need the gro file to have the z dimention in the 6th collumn 
+            
+            %%%%% What to make a box that is the size of the protein but 
             x_rot = orientation_seed(k,1);
             y_rot = orientation_seed(k,2);
             [d,Output1] = system("wsl gmx editconf -f " + protein_filename + " -o " + protein_nickname + "_" + x_rot + "_" + y_rot + "_" + z_rot + ".gro -rotate " + x_rot + " " + y_rot + " " + z_rot );

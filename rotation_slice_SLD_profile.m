@@ -35,6 +35,7 @@ save('List_of_files_rot.mat','List_of_files_rot')
 %loop using the List of files saved variables
 number_of_states = size(List_of_files);
 data.number_of_states = number_of_states(1,2)
+Loading = ["Loading " + "0" + "%"]
 for i = 1:number_of_states(1,2)
     [average_z_res_T, Residues,protein_box_x,protein_box_y,protein_box_z] = gro_slicer_gro(List_of_files(1,i)); % all gro files
     %create a data structure to store the information
@@ -52,12 +53,14 @@ data.number_contrasts = size(data.D2O_frac);
 data.number_contrasts(2) = [];
 
 %Loop over all ""states"" and all contrasts
+Loading = ["Loading " + "0" + "%"]
 for i = 1:data.number_of_states
     for j =1:data.number_contrasts
         [data.SLD_of_average_z_res{i,j}, data.Vol_of_average_z_res{i,j}] = AA_alocation_gro(data.average_z_res_T{i,1},data.Residues{i,1},data.D2O_frac(j,1)); % all gro files
         [data.M{i,j},data.Thick_protein_slice{i,j},data.SLD_protein_slice{i,j},data.SLD_layer{i,j},data.Vol_hydrate{i,j},data.slice_Vol{i,j}, data.Vol_protein_slice{i,j}] = Histogram_gro(data.average_z_res_T{i,1},data.Residues{i,1},data.SLD_of_average_z_res{i,1},data.Vol_of_average_z_res{i,1},data.protein_box_x{i,1},data.protein_box_y{i,1},data.protein_box_z{i,1},data.D2O_frac(j,1));
 
     end
+    Loading = ["Loading " + 100*i/number_of_states(1,2) + "%"]
 end
 % %  next step is to histogram it
 save('data.mat','data')
