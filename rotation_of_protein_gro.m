@@ -52,7 +52,9 @@ if rotation_check == 1
               height_protein(k,1) = max(z)-min(z);
             pos = position_producer_gro(height_protein(k,1)); %%%% GRO FUNCTION
             [e,Output2] = system("wsl gmx insert-molecules -f " + surface_filename +  " -ci " + protein_nickname + "_" + x_rot + "_" + y_rot + "_" + z_rot + ".gro -o " + surface_nickname +  "_" + protein_nickname + "_" + x_rot + "_" + y_rot + "_" + z_rot + ".gro -ip pos.dat -nmol 1 -rot none");       
-            List_of_files(k) = [surface_nickname + "_" + protein_nickname + "_" + x_rot + "_" + y_rot + "_" + z_rot + ".gro"] % this one to include the surface
+            List_of_files(k) = [protein_nickname + "_" + x_rot + "_" + y_rot + "_" + z_rot + ".gro"]; % this one to include the surface
+
+            %             List_of_files(k) = [surface_nickname + "_" + protein_nickname + "_" + x_rot + "_" + y_rot + "_" + z_rot + ".gro"] % this one to include the surface
     % % % % % %         List_of_files((j+1)+(180/step_rot_y)*i) = [protein_nickname + "_" + x_rot + "_" + y_rot + "_" + z_rot + ".gro"];
             List_of_files_rot{k} = [x_rot, y_rot, z_rot];
 %         end

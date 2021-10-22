@@ -90,7 +90,7 @@ contrast_best = find(minIdx);
 xx = Thick_protein{State_Number,1}(Z_offset:end)-Thick_protein{State_Number,1}(Z_offset);
 x = Thick_protein{State_Number,1}(Z_offset:end)-Thick_protein{State_Number,1}(Z_offset);
 
-z_interface = Penetration
+z_interface = Penetration;
 
 dist_inter    = abs(xx - z_interface);
 minDist_inter = min(dist_inter);

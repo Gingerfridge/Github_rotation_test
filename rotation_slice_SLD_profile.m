@@ -1,4 +1,4 @@
-function rotation_slice_SLD_profile()
+function rotation_slice_SLD_profile(orientation_seed)
 % order of running
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -60,7 +60,7 @@ for i = 1:data.number_of_states
         [data.M{i,j},data.Thick_protein_slice{i,j},data.SLD_protein_slice{i,j},data.SLD_layer{i,j},data.Vol_hydrate{i,j},data.slice_Vol{i,j}, data.Vol_protein_slice{i,j}] = Histogram_gro(data.average_z_res_T{i,1},data.Residues{i,1},data.SLD_of_average_z_res{i,1},data.Vol_of_average_z_res{i,1},data.protein_box_x{i,1},data.protein_box_y{i,1},data.protein_box_z{i,1},data.D2O_frac(j,1));
 
     end
-    Loading = ["Loading " + 100*i/number_of_states(1,2) + "%"]
+    Loading = ["2/3 Loading " + 100*i/number_of_states(1,2) + "%"]
 end
 % %  next step is to histogram it
 save('data.mat','data')

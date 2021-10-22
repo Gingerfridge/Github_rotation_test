@@ -11,7 +11,7 @@ M(:,4) = Vol_of_average_z_res;
 length = size(M);
 
 %length of slice and how it is sliced needs to be considered
-start = -10;
+start = -120;
 slice_thickness = 0.1;%nm units
 finish = max(M(:,1))+0.2;
 edges = start:slice_thickness:finish;
@@ -31,7 +31,7 @@ s = size(Binned_Slices);
 
 for k = 1:s(1,1)
     SLD_protein_slice(k,1) = mean(Binned_Slices{k,1}(:,3));
-    Thick_protein_slice(k,1) = mean(Binned_Slices{k,1}(:,1))*10; %*10 to convert nm to [A]
+    Thick_protein_slice(k,1) = mean(Binned_Slices{k,1}(:,1)-Binned_Slices{1,1}(1,1))*10+1; %*10 to convert nm to [A] % make the thick = 0 with a subtraction of the first number 
     Vol_protein_slice(k,1) = sum(Binned_Slices{k,1}(:,4));
     slice_Vol(k,1) =  boxarea*slice_thickness*10; %units A*A*(nm*10)=[A^3]
 end
