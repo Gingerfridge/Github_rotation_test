@@ -87,6 +87,7 @@ contrast_best = find(minIdx);
 %%CONSISTENT%%%%%%%%%%%%%%%%%%%
 %this needs to be done based on the layers (done in
 %SLD_sim_and_slab_NEW_GRO)
+% xx = transpose((Thick_protein{State_Number,1}(Z_offset):0.0001:Thick_protein{State_Number,1}(end)+0.0001)-Thick_protein{State_Number,1}(Z_offset));
 xx = Thick_protein{State_Number,1}(Z_offset:end)-Thick_protein{State_Number,1}(Z_offset);
 x = Thick_protein{State_Number,1}(Z_offset:end)-Thick_protein{State_Number,1}(Z_offset);
 
@@ -111,12 +112,20 @@ Z_offset = round(Z_offset);
 
 z_interface_idx_offset = interface_best+Z_offset;
 
+Vol_not_protein=Vol_hydrate{State_Number,contrast_best}(Z_offset:z_interface_idx_offset);
+layer_hydration = params(starting_params_number-1);
+%  this part is a bit of a mess at the moment 
 
-SLD_layer_z_offset_before = (Vol_hydrate{State_Number,contrast_best}(Z_offset:z_interface_idx_offset)*params(starting_params_number-3)+Vol_protein_slice{State_Number,contrast_best}(Z_offset:z_interface_idx_offset).*SLD_protein_slice{State_Number,contrast_best}(Z_offset:z_interface_idx_offset))./(Vol_hydrate{State_Number,contrast_best}(Z_offset:z_interface_idx_offset)+Vol_protein_slice{State_Number,contrast_best}(Z_offset:z_interface_idx_offset));
+SL_water_from_protein_void = Vol_protein_slice{State_Number,contrast_best}(Z_offset:z_interface_idx_offset)*bulk_out(contrast);
+SL_water_from_fraction = layer_hydration*Vol_not_protein*bulk_out(contrast);
+SL_surface = Vol_not_protein*(1-layer_hydration)*params(starting_params_number-3);
+
+SLD_layer_z_offset_before = ((Vol_not_protein*layer_hydration*bulk_out(contrast))+(Vol_not_protein*(1-layer_hydration)*params(starting_params_number-3))+(Vol_protein_slice{State_Number,contrast_best}(Z_offset:z_interface_idx_offset).*SLD_protein_slice{State_Number,contrast_best}(Z_offset:z_interface_idx_offset)))./((Vol_hydrate{State_Number,contrast_best}(Z_offset:z_interface_idx_offset)+Vol_protein_slice{State_Number,contrast_best}(Z_offset:z_interface_idx_offset)));
 
 SLD_layer_z_offset_after = (Vol_hydrate{State_Number,contrast_best}(z_interface_idx_offset+1:end)*bulk_out(contrast)+Vol_protein_slice{State_Number,contrast_best}(z_interface_idx_offset+1:end).*SLD_protein_slice{State_Number,contrast_best}(z_interface_idx_offset+1:end))./(Vol_hydrate{State_Number,contrast_best}(z_interface_idx_offset+1:end)+Vol_protein_slice{State_Number,contrast_best}(z_interface_idx_offset+1:end));
 
-SLD_layer_full = [(SLD_layer_z_offset_before+hydration*params(starting_params_number-3))/(hydration+1);(SLD_layer_z_offset_after+hydration*bulk_out(contrast))/(hydration+1)];
+% Make this an average of the whole layer 
+SLD_layer_full = [((SLD_layer_z_offset_before+hydration*((SL_water_from_fraction+SL_surface))./(Vol_not_protein))/(hydration+1));(SLD_layer_z_offset_after+hydration*bulk_out(contrast))/(hydration+1)];
 
 % SLD_layer_z_offset = (Vol_hydrate{State_Number,contrast_best}(Z_offset:end)*bulk_out(contrast)+Vol_protein_slice{State_Number,contrast_best}.*SLD_protein_slice{State_Number,contrast_best})./(Vol_hydrate{State_Number,contrast_best}+Vol_protein_slice{State_Number,contrast_best})
 
@@ -128,7 +137,7 @@ SLD_layer_full = [(SLD_layer_z_offset_before+hydration*params(starting_params_nu
 
 
 
-y = (SLD_layer_full(:));%bulk out might need to be bulk out (contrast)
+y = [(SLD_layer_full(:)) ; bulk_out(contrast) ; bulk_out(contrast)];%bulk out might need to be bulk out (contrast)
 % % % y = (SLD_layer{State_Number,contrast_best}(Z_offset:end)+hydration*bulk_out(contrast))/(hydration+1);%bulk out might need to be bulk out (contrast)
 
 
@@ -137,6 +146,10 @@ y = (SLD_layer_full(:));%bulk out might need to be bulk out (contrast)
 % SLD_layer = (Vol_hydrate*SLD_solvent+Vol_protein_slice.*SLD_protein_slice)/slice_Vol(1,1);
 
 % % yy = spline(x,y,xx);
+
+xx = transpose((Thick_protein{State_Number,1}(Z_offset):0.2:(Thick_protein{State_Number,1}(end)+0.0001)+5)-Thick_protein{State_Number,1}(Z_offset));
+% xx = [xx ; xx(end)+1; xx(end)+4];
+x = [x ; x(end)+1; x(end)+4];
 yy = pchip(x,y,xx);
 
 %%%% SLD_layer should be SLD_protein slice then modify it to the SLD_layer

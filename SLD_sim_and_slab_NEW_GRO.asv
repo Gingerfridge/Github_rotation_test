@@ -2,8 +2,8 @@ function [xx,yy] = SLD_sim_and_slab_NEW_GRO(params,bulk_in,bulk_out,contrast,sur
 SLD_Step = 0.1;
 %input here the parameters needed to make a slab model
 
-    layNumber = params(2);     %initilising the number of layers wanted in the fit
-    starting_params_number = 3+4*layNumber;
+    layNumber = params(2);     
+    starting_params_number = 3+4*layNumber;%initilising the number of layers wanted in the fit
      j = 1;
         layers(j,1) = params(4*j-1);
         SLD_no_water(j,1) = params(4*j);
@@ -28,10 +28,12 @@ SLD_Step = 0.1;
 
      if surface_switch == 1
          j = layNumber;
-        layers(j,1) = params(4*j-1)-params(starting_params_number+4);
+        layers(j,1) = params(4*j-1)-params(4*j;
         SLD_no_water(j,1) = params(4*j);
         layHydration(j,1) = params(4*j+2);
         layers(j,2) = (layHydration(j,1)*bulk_out(contrast))+((1-layHydration(j,1))*SLD_no_water(j,1));
+
+
         layers(j,3) = params(4*j+1);
      end
     %define the number of parameter before the simulation data
