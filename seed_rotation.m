@@ -1,5 +1,5 @@
-function orientation_seed = seed_rotation()
-deg_step = 5;
+function orientation_seed = seed_rotation(deg_step)
+
 step = 180/deg_step;
 
 for i = 1:step+1

@@ -1,4 +1,4 @@
-function [xx,yy] = SLD_sim_and_slab_NEW_GRO(params,bulk_in,bulk_out,contrast,surface_switch)
+function [xx,yy,hydration,State_Number] = SLD_sim_and_slab_NEW_GRO(params,bulk_in,bulk_out,contrast,surface_switch)
 SLD_Step = 0.1;
 %input here the parameters needed to make a slab model
 
@@ -28,15 +28,23 @@ SLD_Step = 0.1;
 
      if surface_switch == 1
          j = layNumber;
-        layers(j,1) = params(4*j-1)-params(starting_params_number+4);
+         if params(starting_params_number+4) <  params(starting_params_number-4)-2
+            z_interface = params(starting_params_number+4)-2;
+        else
+            z_interface =  params(starting_params_number-4)-2;
+        end
+        layers(j,1) = params(4*j-1)-z_interface;
         SLD_no_water(j,1) = params(4*j);
         layHydration(j,1) = params(4*j+2);
         layers(j,2) = (layHydration(j,1)*bulk_out(contrast))+((1-layHydration(j,1))*SLD_no_water(j,1));
         layers(j,3) = params(4*j+1);
      end
     %define the number of parameter before the simulation data
-
-    distance = sum(layers(:,1));
+% % % % % % % % % % % % % % % % % % 
+% Layer 4 needs to be limited to the size of the protein AS DOES THE
+% PENETRATION
+% % % % % % % % % % % % % % % % 
+    distance = sum(layers(:,1))-2*layers(layNumber,1);
 
 
     %layers is[ thickness SLD roughness]
@@ -61,12 +69,13 @@ SLD_Step = 0.1;
 % y = (SLD_layer{State_Number,contrast_best}(Z_offset:end)+hydration*bulk_out(contrast))/(hydration+1);%bulk out might need to be bulk out (contrast)
     
 %%% this tracker isn't working well
+%five ang between data make this zero?
 
-    [xx,yy] = Rascal_XY_maker_slab_initiliser_NEW_GRO(params,bulk_in,bulk_out,contrast,starting_params_number);
+    [xx,yy,hydration,State_Number] = Rascal_XY_maker_slab_initiliser_NEW_GRO(params,bulk_in,bulk_out,contrast,starting_params_number);
     tracker = totalRange;
-    xx=xx(:)+tracker-2;
+    xx=xx(:)+tracker+2;
     yy=yy(:);
-    xx = [xout(:); xx(:)];
+    xx = [xout(:)+4; xx(:)];
     yy = [yout(:); yy(:)];
     
     

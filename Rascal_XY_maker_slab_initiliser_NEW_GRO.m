@@ -1,4 +1,4 @@
-function [xx,yy] = Rascal_XY_maker_slab_initiliser_NEW_GRO(params,bulk_in,bulk_out,contrast,starting_params_number)
+function [xx,yy,hydration,State_Number] = Rascal_XY_maker_slab_initiliser_NEW_GRO(params,bulk_in,bulk_out,contrast,starting_params_number)
 %load("data.mat")
 % % This is now working nicely just need to add the logic for the loaded
 % surfaces (now to change orientation as well as this will be in the Params
@@ -14,7 +14,7 @@ load(strcat(parentDirectory,'\SLD_protein_slice.mat'));
 load(strcat(parentDirectory,'\SLD_slice_Vol.mat'));
 load(strcat(parentDirectory,'\Vol_protein_slice.mat'));
 load(strcat(parentDirectory,'\Vol_hydrate.mat'));
-
+load(strcat(parentDirectory,'\Max_protein_length.mat'));
 
 
 
@@ -23,8 +23,8 @@ hydration = params(starting_params_number);
 Z_offset = params(starting_params_number+1); %removes surface etc.
 X_rot = params(starting_params_number+2);
 Y_rot = params(starting_params_number+3);
-Penetration = params(starting_params_number+4);
-
+Penetration = params(starting_params_number-4);
+Penetration_layer_length = params(starting_params_number-4);
 
 
 %%%%%%% This section finds the files that best matches the input x_rot and
@@ -48,7 +48,12 @@ minIdx_y  = (dist_y == minDist_y);
 minVal_y  = test_y(minIdx_y);
 
 Best_index = minIdx_y & minIdx_x;
+%index of the rotated protein being used VERY IMPORTANT
 State_Number = find(Best_index,1,'first');
+
+
+
+save('State_Number.mat','State_Number')
 
 number_of_states = length(List_of_files_rot);
 
@@ -91,7 +96,26 @@ contrast_best = find(minIdx);
 xx = Thick_protein{State_Number,1}(Z_offset:end)-Thick_protein{State_Number,1}(Z_offset);
 x = Thick_protein{State_Number,1}(Z_offset:end)-Thick_protein{State_Number,1}(Z_offset);
 
-z_interface = Penetration;
+
+%this statement makes the penetration max out at the length of the previous
+%interface
+% limits the upper level 
+
+if Penetration >= Max_protein_length(State_Number)
+    Penetration = Max_protein_length(State_Number);
+end
+
+% this induces the penetration
+
+if Penetration <  params(starting_params_number-4)-1
+    z_interface = Penetration;
+else
+    z_interface =  params(starting_params_number-4);
+end
+    %     Penetration = params(starting_params_number-4)-3;
+%     z_interface = params(starting_params_number-4)-3;
+
+
 
 dist_inter    = abs(xx - z_interface);
 minDist_inter = min(dist_inter);
@@ -110,7 +134,9 @@ interface_best = find(minIdx_inter);
 
 Z_offset = round(Z_offset);
 
-z_interface_idx_offset = interface_best+Z_offset;
+%%%removed the Z_offset no need now it is just the rotation of the protein
+
+z_interface_idx_offset = interface_best;
 
 Vol_not_protein=Vol_hydrate{State_Number,contrast_best}(Z_offset:z_interface_idx_offset);
 layer_hydration = params(starting_params_number-1);
@@ -124,6 +150,9 @@ SLD_layer_z_offset_before = ((Vol_not_protein*layer_hydration*bulk_out(contrast)
 
 SLD_layer_z_offset_after = (Vol_hydrate{State_Number,contrast_best}(z_interface_idx_offset+1:end)*bulk_out(contrast)+Vol_protein_slice{State_Number,contrast_best}(z_interface_idx_offset+1:end).*SLD_protein_slice{State_Number,contrast_best}(z_interface_idx_offset+1:end))./(Vol_hydrate{State_Number,contrast_best}(z_interface_idx_offset+1:end)+Vol_protein_slice{State_Number,contrast_best}(z_interface_idx_offset+1:end));
 
+
+average_protein_volume = mean(Vol_protein_slice{State_Number,contrast_best}(Z_offset:z_interface_idx_offset));
+average_protein_sl = average_protein_volume*bulk_out(contrast);
 % Make this an average of the whole layer 
 SLD_layer_full = [((SLD_layer_z_offset_before+hydration*((SL_water_from_fraction+SL_surface))./(Vol_not_protein))/(hydration+1));(SLD_layer_z_offset_after+hydration*bulk_out(contrast))/(hydration+1)];
 
@@ -151,6 +180,11 @@ xx = transpose((Thick_protein{State_Number,1}(Z_offset):0.2:(Thick_protein{State
 % xx = [xx ; xx(end)+1; xx(end)+4];
 x = [x ; x(end)+1; x(end)+4];
 yy = pchip(x,y,xx);
+
+
+%%%%%%%calculations
+
+
 
 %%%% SLD_layer should be SLD_protein slice then modify it to the SLD_layer
 %%%% here

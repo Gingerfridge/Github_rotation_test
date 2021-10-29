@@ -15,6 +15,7 @@ function [height_protein, List_of_files, List_of_files_rot,Loading_roation,Outpu
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
 
 
+
 %Change this so it accepts a list of rotations and "frames" of a simulation
 
 x_rot = 0;
@@ -48,10 +49,12 @@ if rotation_check == 1
             x_rot = orientation_seed(k,1);
             y_rot = orientation_seed(k,2);
             [d,Output1] = system("wsl gmx editconf -f " + protein_filename + " -o " + protein_nickname + "_" + x_rot + "_" + y_rot + "_" + z_rot + ".gro -rotate " + x_rot + " " + y_rot + " " + z_rot );
-            z = importfile1_for_rot_gro(protein_nickname + "_" + x_rot + "_" + y_rot + "_" + z_rot + ".gro", 3, inf); %%%% GRO FUNCTION
-              height_protein(k,1) = max(z)-min(z);
-            pos = position_producer_gro(height_protein(k,1)); %%%% GRO FUNCTION
-            [e,Output2] = system("wsl gmx insert-molecules -f " + surface_filename +  " -ci " + protein_nickname + "_" + x_rot + "_" + y_rot + "_" + z_rot + ".gro -o " + surface_nickname +  "_" + protein_nickname + "_" + x_rot + "_" + y_rot + "_" + z_rot + ".gro -ip pos.dat -nmol 1 -rot none");       
+%             z = importfile1_for_rot_gro(protein_nickname + "_" + x_rot + "_" + y_rot + "_" + z_rot + ".gro", 3, inf); %%%% GRO FUNCTION
+%               height_protein(k,1) = max(z)-min(z);
+                height_protein = 0;
+%             pos = position_producer_gro(height_protein(k,1)); %%%% GRO FUNCTION
+%             Add this for a surface
+%             [e,Output2] = system("wsl gmx insert-molecules -f " + surface_filename +  " -ci " + protein_nickname + "_" + x_rot + "_" + y_rot + "_" + z_rot + ".gro -o " + surface_nickname +  "_" + protein_nickname + "_" + x_rot + "_" + y_rot + "_" + z_rot + ".gro -ip pos.dat -nmol 1 -rot none");       
             List_of_files(k) = [protein_nickname + "_" + x_rot + "_" + y_rot + "_" + z_rot + ".gro"]; % this one to include the surface
 
             %             List_of_files(k) = [surface_nickname + "_" + protein_nickname + "_" + x_rot + "_" + y_rot + "_" + z_rot + ".gro"] % this one to include the surface

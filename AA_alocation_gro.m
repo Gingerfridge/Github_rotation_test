@@ -12,7 +12,7 @@ end
 
 SLD_values = str2double(SL(:,5));
 Vol_values = str2double(SL(:,6));
-
+Vol_values = str2double(SL(:,6));
 
 SLD_of_average_z_res = Grand_Logic_Matrix*SLD_values;
 Vol_of_average_z_res = Grand_Logic_Matrix*Vol_values;

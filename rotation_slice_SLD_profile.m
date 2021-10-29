@@ -1,4 +1,4 @@
-function rotation_slice_SLD_profile(orientation_seed)
+function rotation_slice_SLD_profile()
 % order of running
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -10,8 +10,8 @@ function rotation_slice_SLD_profile(orientation_seed)
 
 % once you have the gro files you want to analyse
 % % % % % %  no output list height_protein = rotation_of_protein_gro(step_rot_x,step_rot_y,protein_filename,protein_nickname,surface_filename,surface_nickname) %% all gro files
-
-Working_directory = 'C:\Users\mbcx4ph5\Dropbox (The University of Manchester)\PhD\RasCAL_2019\Fc_SO_ii'
+orientation_seed = seed_rotation(5) % angle between gro files in x rotation and y
+Working_directory = 'C:\Users\mbcx4ph5\Dropbox (The University of Manchester)\PhD\RasCAL_2019\Fc_SO_iii'
 data.protein_filename = "Fc.gro"
 data.protein_nickname = "FC" %%%NO NUMBERS IN THIS NAME
 data.surface_filename = "SO_2_5point5_align.gro"
@@ -20,6 +20,8 @@ data.step_rot_x = 180
 data.step_rot_y = 180
 data.D2O_frac = [0; 0.08; 0.45; 0.97;0.98;0.99;1]; %%%% ADD which contrasts you have here (this will make it run much longer
 
+
+% no surface required
 
 [height_protein, List_of_files, List_of_files_rot, Loading_roation, Output0] = rotation_of_protein_gro(data.step_rot_x,data.step_rot_y,data.protein_filename,data.protein_nickname,data.surface_filename,data.surface_nickname,orientation_seed)
 
@@ -48,6 +50,12 @@ for i = 1:number_of_states(1,2)
     Loading = ["Loading " + 100*i/number_of_states(1,2) + "%"]
 end
     %  followed by creates a data structure with all the information needed
+protein_box_x = data.protein_box_x;
+save('protein_box_x','protein_box_x')
+protein_box_y = data.protein_box_y;
+save('protein_box_y','protein_box_y')
+protein_box_z = data.protein_box_z;
+save('protein_box_z','protein_box_z')
 
 data.number_contrasts = size(data.D2O_frac);
 data.number_contrasts(2) = [];
@@ -63,7 +71,7 @@ for i = 1:data.number_of_states
     Loading = ["2/3 Loading " + 100*i/number_of_states(1,2) + "%"]
 end
 % %  next step is to histogram it
-save('data.mat','data')
+save('data.mat','data','-v7.3')
 
 
 % % % SAVE only the parts needed for fitting 
@@ -74,6 +82,10 @@ Vol_hydrate = data.Vol_hydrate;
 SLD_protein_slice = data.SLD_protein_slice;
 SLD_slice_Vol = data.slice_Vol;
 Vol_protein_slice = data.Vol_protein_slice;
+
+Thick_protein_slice = data.Thick_protein_slice;
+save('Thick_protein_slice.mat','Thick_protein_slice')
+
 save('SLD_protein_slice.mat','SLD_protein_slice')
 save('Thick_protein.mat','Thick_protein')
 save('SLD_layer.mat','SLD_layer')
@@ -82,6 +94,21 @@ save('D2O_frac.mat','D2O_frac')
 save('SLD_slice_Vol.mat','SLD_slice_Vol')
 save('Vol_protein_slice.mat','Vol_protein_slice')
 save('Vol_hydrate.mat','Vol_hydrate')
+
+
+%create the limit in the z axis
+[Max_protein_length] = maxdistanceofprotein(Thick_protein_slice);
+Max_protein_length = Max_protein_length-2;
+save('Max_protein_length.mat','Max_protein_length')
+
+% save the are of the protein box for the calculation of the moles per unit
+% area 
+
+for i = 1:length(protein_box_x)
+    area_of_protein_box(i,1) = protein_box_x{i,1}(1,1)*protein_box_x{i,1}(1,1);
+end
+save('area_of_protein_box.mat','area_of_protein_box')
+
 % YOU NOW HAVE A DATA STRUCT WITH THE sld PROFILE OF THE AMINO ACIDS FROM
 % YOUR GRO FILE 
 
