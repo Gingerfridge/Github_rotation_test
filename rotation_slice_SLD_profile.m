@@ -1,4 +1,4 @@
-function rotation_slice_SLD_profile()
+function rotation_slice_SLD_profile(protein_nickname,protein_filename,Rotation_increment,Working_directory,D2O_frac)
 % order of running
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -10,15 +10,19 @@ function rotation_slice_SLD_profile()
 
 % once you have the gro files you want to analyse
 % % % % % %  no output list height_protein = rotation_of_protein_gro(step_rot_x,step_rot_y,protein_filename,protein_nickname,surface_filename,surface_nickname) %% all gro files
-orientation_seed = seed_rotation(5) % angle between gro files in x rotation and y
-Working_directory = 'C:\Users\mbcx4ph5\Dropbox (The University of Manchester)\PhD\RasCAL_2019\Fc_SO_iii'
-data.protein_filename = "Fc.gro"
-data.protein_nickname = "FC" %%%NO NUMBERS IN THIS NAME
+orientation_seed = seed_rotation(Rotation_increment) % angle between gro files in x rotation and y
+Working_directory;
+data.protein_filename = protein_filename
+
+
+data.protein_nickname = protein_nickname %%%NO NUMBERS IN THIS NAME
+
+
 data.surface_filename = "SO_2_5point5_align.gro"
 data.surface_nickname = "SO" %%%NO NUMBERS IN THIS NAME
 data.step_rot_x = 180
 data.step_rot_y = 180
-data.D2O_frac = [0; 0.08; 0.45; 0.97;0.98;0.99;1]; %%%% ADD which contrasts you have here (this will make it run much longer
+data.D2O_frac = D2O_frac; %%%% ADD which contrasts you have here (this will make it run much longer
 
 
 % no surface required
@@ -71,8 +75,11 @@ for i = 1:data.number_of_states
     Loading = ["2/3 Loading " + 100*i/number_of_states(1,2) + "%"]
 end
 % %  next step is to histogram it
-save('data.mat','data','-v7.3')
-
+%
+% % % % % % % % % % % % % % % % % % 
+% save('data.mat','data','-v7.3') % This will save a massive data set no
+% need 
+% % % % % % % % % % % % % % % % % % 
 
 % % % SAVE only the parts needed for fitting 
 Thick_protein = data.Thick_protein_slice;

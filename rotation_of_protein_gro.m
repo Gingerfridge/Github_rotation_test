@@ -29,7 +29,7 @@ protein_filename = [protein_filename_pre + "_min.gro"]
 [c,Output0] = system("wsl gmx editconf -f " + protein_filename_pre + " -o " + protein_filename + " -bt cubic -d 0 -center 0 0 0",'-echo')
 
 % 1135 141021 remove princ axis
-% [c,Output0] = system("wsl gmx editconf -f " + protein_filename_pre + " -o " + protein_filename + " -bt cubic -d 0 -center 0 0 0 -princ",'-echo')
+[c,Output0] = system("wsl gmx editconf -f " + protein_filename_pre + " -o " + protein_filename + " -bt cubic -d 0 -center 0 0 0 -princ",'-echo')
 
 
 %%%% need to write code that reads the box around the protein 
