@@ -22,7 +22,7 @@ function varargout = Load_data_gui(varargin)
 
 % Edit the above text to modify the response to help Load_data_gui
 
-% Last Modified by GUIDE v2.5 29-Oct-2021 17:56:55
+% Last Modified by GUIDE v2.5 30-Oct-2021 16:46:38
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -58,8 +58,23 @@ handles.output = hObject;
 % Update handles structure
 guidata(hObject, handles);
 
-% UIWAIT makes Load_data_gui wait for user response (see UIRESUME)
+%%%% ADD Code here for it to load
+%%% syntax for color change
+% set(handles.text2, 'BackgroundColor', [0.5 0.5 1]);
+
+
+
+set(handles.pushbutton8, 'BackgroundColor', [1 0.2 0.2]);
+for i = 1:length(handles.uitable3.Data)
+    handles.uitable3.Data{i,1} = NaN;
+    handles.uitable3.Data{i,2} = NaN;
+end
+
+
+%  UIWAIT makes Load_data_gui wait for user response (see UIRESUME)
 % uiwait(handles.figure1);
+
+
 
 
 % --- Outputs from this function are returned to the command line.
@@ -87,13 +102,10 @@ function Load_gro_file_pushbutton1_Callback(hObject, eventdata, handles)
 % hObject    handle to Load_gro_file_pushbutton1 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
-[filename,filepath] = uigetfile({'*.gro';'*.*'}, 'Search Image To Be Displayed');
-
-
-fullname = [filepath filename] 
-
+[filename,filepath] = uigetfile({'*.gro';'*.*'});
+fullname = [filepath filename] ;
 handles.text6.String = {filename};
+Run_colour_changer(handles)
 
 
 
@@ -111,8 +123,9 @@ function Rotation_checkbox2_Callback(hObject, eventdata, handles) %%%%ROT
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
+
 % Hint: get(hObject,'Value') returns toggle state of Rotation_checkbox2
-Rotation_checkbox2 = get(hObject,'Value')
+Rotation_checkbox2 = get(hObject,'Value');
 if handles.Rotation_checkbox2.Value
     handles.text2.String = {'This fuction takes a Gro file and rotates it around the x and y axis outputs the SLD profiles for fitting in matlab etc.'};
 end
@@ -120,6 +133,8 @@ end
 if ~handles.Rotation_checkbox2.Value
     handles.text2.String = {'Tick the Rotation box to use this function'};
 end
+Run_colour_changer(handles)
+
 
 % --- Executes during object creation, after setting all properties.
 function uitable3_CreateFcn(hObject, eventdata, handles)
@@ -139,15 +154,17 @@ function [x,y] = uitable3_CellEditCallback(hObject, eventdata, handles)
 %	Error: error string when failed to convert EditData to appropriate value for Data
 % handles    structure with handles and user data (see GUIDATA)
 x = eventdata;
-y = handles
-z = hObject
+y = handles;
+z = hObject;
 
 %%%% creates an array to feed into the rotation function
 
+
 for i = 1:length(z.Data)
+    TF(i) = isnan(z.Data{i,1});
     if z.Data{i,1} <= 1
         if z.Data{i,1} >= 0  
-             TF(i) = isnan(z.Data{i,1});
+
         else
              z.Data{i,1} = NaN;
         end
@@ -171,7 +188,7 @@ for i = 1:length(I)
 end
 %     
 % Contrasts = i*Logic
-D2O_frac;
+Run_colour_changer(handles)
 
 
 
@@ -207,6 +224,7 @@ function popupmenu2_Callback(hObject, eventdata, handles)
 %        contents{get(hObject,'Value')} returns selected item from popupmenu2
 contents = cellstr(get(hObject,'String'));
 Value = contents{get(hObject,'Value')};
+Run_colour_changer(handles)
 
 
 
@@ -230,10 +248,8 @@ function [filepath] = pushbutton2_Callback(hObject, eventdata, handles) %%%%ROT
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 [filepath] = uigetdir;
-
-
-
 handles.text5.String = {filepath};
+Run_colour_changer(handles)
 
 
 % --- Executes during object creation, after setting all properties.
@@ -307,7 +323,7 @@ function edit5_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'String') returns contents of edit5 as text
 %        str2double(get(hObject,'String')) returns contents of edit5 as a double
-
+Run_colour_changer(handles)
 
 % --- Executes during object creation, after setting all properties.
 function edit5_CreateFcn(hObject, eventdata, handles)
@@ -323,29 +339,149 @@ end
 
 
 
-function RUN_ROT_pushbutton3_Callback(hObject, eventdata, handles)
-% hObject    handle to RUN_ROT_pushbutton3 (see GCBO)
+% --- Executes during object creation, after setting all properties.
+function text2_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to text2 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+
+% --- Executes on button press in pushbutton7.
+function pushbutton7_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton7 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-%%%%%% ROT MAIN FUNCTION
-%%%%%% Need a way to logic it thorugh so that the code is'nt broken when
-%%%%%% people use it
 
-Working_directory = handles.text5.String
+function [Working_directory,Rotation_increment,protein_filename,protein_nickname,D2O_frac,Message,Working_boolean] = Function_check(handles)
+Working_boolean = 0;    
+handles.text5.String;
+Working_directory = handles.text5.String;
+D2O_frac = (1);
+Rotation_increment = str2double((handles.popupmenu2.String{handles.popupmenu2.Value,1})); % this should work for the rotation code
 
-Rotation_increment = handles.popupmenu2.Value % this should work for the rotation code
+protein_filename = handles.text6.String;
 
-protein_filename = handles.text6.String
 
-D2O_frac = handles.uitable3.Data
+protein_nickname = handles.edit5.String;
+
+if ~handles.Rotation_checkbox2.Value
+    Message = "Check the rotation tickbox";
+    %add not in the run section
+else
+%Must selct folder
+tf_Work_Folder = strcmp(handles.text5.String,'Select Work Folder');   
+
+if tf_Work_Folder
+    Message = "Select work folder";
+    %add not in the run section
+elseif    
+%Must select gro file
+tf_Gro_Name = strcmp(handles.text6.String,'Select .gro File');   
+
+if tf_Gro_Name
+    Message = "Select .gro file from in the folder selected";
+    %add not in the run section
+else    
+
+
+
+% must fill in the contrast
+D2O_frac = handles.uitable3.Data;
 for i =1:length(D2O_frac)
-    X(i,1) = D2O_frac{i,1}
+    X(i,1) = D2O_frac{i,1};
+end
+
+X(isnan(X(:,1)),:) = [];
+
+D2O_frac = X;
+D2O_frac(isnan(D2O_frac(:,1)),:) = [];
+D2O_test_1 = isnumeric(D2O_frac);
+D2O_test_2 = isnan(D2O_frac);
+
+if D2O_test_1 == 0
+    Message = "Fill in D2O fraction table";
+else
+D2O_test_2i = isempty(D2O_test_2);
+D2O_test_2ii = all(D2O_test_2(:) == 0)  ;  
+
+if D2O_test_2i == 1
+    Message = "Fill in D2O fraction table";
+else
+
+if D2O_test_2ii ~= 1   
+    Message = "Fill in D2O fraction table";
+else
+
+
+Nick_Name_test = any(regexp(handles.edit5.String,'[0-9]'))    
+if Nick_Name_test
+    Message = "NO NUMBERS in Name"
+else
+    
+Working_boolean = 1;    
+
+Message = "this would work";
+
+handles.text5.String{1,1};
+Working_directory = handles.text5.String{1,1};
+
+Rotation_increment = str2double((handles.popupmenu2.String{handles.popupmenu2.Value,1})); % this should work for the rotation code
+
+protein_filename = handles.text6.String;
+
+
+protein_nickname = handles.edit5.String;
+
+end
+end
+end
+end
+end % 
+end % 
+end % 
+
+function Run_colour_changer(handles)
+[Working_directory,Rotation_increment,protein_filename,protein_nickname,D2O_frac,Message,Working_boolean] = Function_check(handles)
+if Working_boolean == 1
+    set(handles.pushbutton8, 'BackgroundColor', [0.47 0.67 0.19]);
+else
+    set(handles.pushbutton8, 'BackgroundColor', [1 0.2 0.2])
 end
 
 
 
-protein_nickname = handles.edit5.String
+% --- Executes on button press in pushbutton8.
+function pushbutton8_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton8 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+%Must tick box
+[Working_directory,Rotation_increment,protein_filename,protein_nickname,D2O_frac,Message,Working_boolean] = Function_check(handles);
+if Working_boolean == 0
+Message
+handles.text13.String = Message;
+else
+cd(Working_directory);
+Message
+handles.text13.String = Message;
+end
+
+handles.text13.String = Message;
+
+% rotation_slice_SLD_profile(protein_nickname,protein_filename,Rotation_increment,Working_directory,D2O_frac)
 
 
+% --- Executes during object creation, after setting all properties.
+function text11_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to text11 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
 
+
+% --- Executes during object creation, after setting all properties.
+function text13_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to text13 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called

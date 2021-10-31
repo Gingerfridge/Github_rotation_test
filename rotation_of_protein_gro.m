@@ -37,7 +37,8 @@ protein_filename = [protein_filename_pre + "_min.gro"]
 
 rotation_check = 1;
 if rotation_check == 1
-    Loading_roation = ["Loading " + "0" + "%"]
+     h = waitbar(0,'Rotating protein (1/3)')
+    Loading_roation = ["Loading Rotation (1/3) " + "0" + "%"];
     for k = 1:length(orientation_seed)
 %     for i = 0:180/step_rot_y
 %         y_rot = i*step_rot_y;
@@ -61,12 +62,17 @@ if rotation_check == 1
     % % % % % %         List_of_files((j+1)+(180/step_rot_y)*i) = [protein_nickname + "_" + x_rot + "_" + y_rot + "_" + z_rot + ".gro"];
             List_of_files_rot{k} = [x_rot, y_rot, z_rot];
 %         end
-        Loading_roation = ["Loading " + 100*k/length(orientation_seed) + "%"]
+        Loading_roation = ["Loading Rotation (1/3) " + 100*k/length(orientation_seed) + "%"];
+ 
+        waitbar(k/length(orientation_seed),h,'Rotating protein (1/3)');
     end
+
 else
 %%%%%%% add code for the simulation fitting     
-end
 
+
+end
+close(h)
 
 %         [e,Output2] = system("wsl gmx pdb2gmx -f nip_0_0_0_c.gro -o nip_0_0_0_c_top.gro");
 %         [e,Output2] = system("wsl gmx editconf -f SO_2_5point5.gro -o SO_2_5point5_align.gro -translate 0 0 -7.5");
