@@ -156,10 +156,7 @@ function [x,y] = uitable3_CellEditCallback(hObject, eventdata, handles)
 x = eventdata;
 y = handles;
 z = hObject;
-
 %%%% creates an array to feed into the rotation function
-
-
 for i = 1:length(z.Data)
     TF(i) = isnan(z.Data{i,1});
     if z.Data{i,1} <= 1
@@ -172,17 +169,11 @@ for i = 1:length(z.Data)
         z.Data{i,1} = NaN;
     end
 end
-
 for i = 1:length(z.Data)
     z.Data{i,2} =  (z.Data{i,1}(1,1))*(6.91e-6)-0.56e-6;
 end
-
-
-
 TF = ~TF;
 I = find(TF == 1);
-
-
 for i = 1:length(I)
     D2O_frac(i,1) =  (z.Data{I(i),1}(1,1));
 end
@@ -352,7 +343,7 @@ function pushbutton7_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-
+%this function works the logic of the file prep process
 function [Working_directory,Rotation_increment,protein_filename,protein_nickname,D2O_frac,Message,Working_boolean] = Function_check(handles)
 Working_boolean = 0;    
 handles.text5.String;
@@ -370,20 +361,29 @@ if ~handles.Rotation_checkbox2.Value
     %add not in the run section
 else
 %Must selct folder
-tf_Work_Folder = strcmp(handles.text5.String,'Select Work Folder');   
-
+tf_Work_Folder = strcmp(handles.text5.String,'Select Work Folder');
+tf_Work_Folder_2 = strcmp(handles.text5.String,'0');
 if tf_Work_Folder
     Message = "Select work folder";
     %add not in the run section
-elseif    
+else
+if tf_Work_Folder_2
+    Message = "Select work folder";
+    %add not in the run section
+else    
+    
+    
 %Must select gro file
 tf_Gro_Name = strcmp(handles.text6.String,'Select .gro File');   
-
+tf_Gro_Name_2 = strcmp(handles.text6.String,'0');  
 if tf_Gro_Name
     Message = "Select .gro file from in the folder selected";
     %add not in the run section
 else    
-
+if tf_Gro_Name_2
+    Message = "Select .gro file from in the folder selected";
+    %add not in the run section
+else 
 
 
 % must fill in the contrast
@@ -413,26 +413,27 @@ if D2O_test_2ii ~= 1
     Message = "Fill in D2O fraction table";
 else
 
-
+Nick_Name_test_2 = isempty(handles.edit5.String);
+if Nick_Name_test_2
+    Message = "Please enter a name"
+else
+    
 Nick_Name_test = any(regexp(handles.edit5.String,'[0-9]'))    
 if Nick_Name_test
     Message = "NO NUMBERS in Name"
 else
-    
+     
 Working_boolean = 1;    
-
-Message = "this would work";
-
+Message = "Running";
 handles.text5.String{1,1};
 Working_directory = handles.text5.String{1,1};
-
 Rotation_increment = str2double((handles.popupmenu2.String{handles.popupmenu2.Value,1})); % this should work for the rotation code
-
 protein_filename = handles.text6.String;
-
-
 protein_nickname = handles.edit5.String;
 
+end
+end
+end
 end
 end
 end
@@ -445,8 +446,11 @@ function Run_colour_changer(handles)
 [Working_directory,Rotation_increment,protein_filename,protein_nickname,D2O_frac,Message,Working_boolean] = Function_check(handles)
 if Working_boolean == 1
     set(handles.pushbutton8, 'BackgroundColor', [0.47 0.67 0.19]);
+    handles.text13.String = '';
+    
 else
     set(handles.pushbutton8, 'BackgroundColor', [1 0.2 0.2])
+    handles.text13.String = '';
 end
 
 
@@ -460,18 +464,110 @@ function pushbutton8_Callback(hObject, eventdata, handles)
 %Must tick box
 [Working_directory,Rotation_increment,protein_filename,protein_nickname,D2O_frac,Message,Working_boolean] = Function_check(handles);
 if Working_boolean == 0
-Message
+Message;
 handles.text13.String = Message;
 else
 cd(Working_directory);
-Message
+Message;
 handles.text13.String = Message;
+handles.pushbutton8.String = 'Please wait...';
+%%%% this will run the code
+% I should make it output some "important" loading information
+[Loading_roation,Loading_Slicer,Loading_SLD] = rotation_slice_SLD_profile(protein_nickname,protein_filename,Rotation_increment,Working_directory,D2O_frac);
+handles.text13.String = '';
+answer = questdlg('Would you like to open in RasCAL?', ...
+	'Dessert Menu', ...
+	'Yes','No','Cancel');
+% Handle response
+switch answer
+    case 'Yes'
+        disp([answer ' Loading...'])
+        handles.pushbutton8.String = 'Please wait...';
+        %%%% This needs to be for the user to choose where the location of
+        %%%% the file is.
+
+        % create a directory inside the working folder
+        working_directory = pwd;
+        cd(working_directory)
+        outputFolder = fullfile(working_directory, handles.edit5.String)
+        if ~exist(outputFolder, 'dir')
+            mkdir(outputFolder);
+        end
+        project_directory = fullfile(working_directory,handles.edit5.String)
+        Template_path = 'C:\Gromacs Work\Rotation_github_test\Github_rotation_test\Rascal_Template\Template';
+        
+        data_files_path = fullfile(project_directory, 'dataFiles')
+        if ~exist(data_files_path, 'dir')
+            mkdir(data_files_path);
+        end
+        
+        %copy and rename the defalut penetration file
+%         choose the folder containing the templpate!!!!!!
+        
+
+%%%%%%% Copy data files for an air water interface experiment
+        inputFullFileName = fullfile(Template_path, 'Fc 258 136027_136029_BG_SUB.dat');
+        outputFullFileName = fullfile(data_files_path, 'Fc 258 136027_136029_BG_SUB.dat');
+        % copy from the template to the new folder
+        copyfile(inputFullFileName, outputFullFileName)
+
+        inputFullFileName = fullfile(Template_path, 'Fc D2o 136036_136038_BG_SUB.dat');
+        outputFullFileName = fullfile(data_files_path, 'Fc D2o 136036_136038_BG_SUB.dat');
+        % copy from the template to the new folder
+        copyfile(inputFullFileName, outputFullFileName)
+ 
+        inputFullFileName = fullfile(Template_path, 'Fc h2o 135937_135939_BG_SUB.dat');
+        outputFullFileName = fullfile(data_files_path, 'Fc h2o 135937_135939_BG_SUB.dat');
+        % copy from the template to the new folder
+        copyfile(inputFullFileName, outputFullFileName)       
+        
+        inputFullFileName = fullfile(Template_path, 'Fc NRW 135975_135978_BG_SUB.dat');
+        outputFullFileName = fullfile(data_files_path, 'Fc NRW 135975_135978_BG_SUB.dat');
+        % copy from the template to the new folder
+        copyfile(inputFullFileName, outputFullFileName)
+%%%%%%% 
+        
+        
+        
+        
+        
+        inputFullFileName = fullfile(Template_path, 'Template.mat');
+        outputFullFileName = fullfile(project_directory, [handles.edit5.String '_Project.mat']);
+        % copy from the template to the new folder
+        copyfile(inputFullFileName, outputFullFileName)
+        
+        inputFullFileName = fullfile(Template_path, 'SLD_4_Rascal_with_slab_initiliser_roughness_NEW_GRO_SLICER.m');
+        outputFullFileName = fullfile(project_directory, ['SLD_4_Rascal_with_slab_initiliser_roughness_NEW_GRO_SLICER.m']);
+        % copy from the template to the new folder
+        copyfile(inputFullFileName, outputFullFileName)
+        
+        
+        
+        
+        cd('C:\Users\mbcx4ph5\Dropbox (The University of Manchester)\PhD\RasCAL_2019')
+        rascal
+
+        
+        problem = rLoadProblem(project_directory,[handles.edit5.String '_Project.mat']);
+        reSetProblem(problem);
+
+        %need to add code that opens Rascal here
+    case 'No'
+        disp(' Exiting...')
+    case 'Cancel'
+        disp(' Exiting...')
+        
 end
+end
+handles.pushbutton8.String = 'Run';
+        
 
-handles.text13.String = Message;
-
-% rotation_slice_SLD_profile(protein_nickname,protein_filename,Rotation_increment,Working_directory,D2O_frac)
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%this part should be what happens after the slicer finished
+%Ask the user if they would like to generage model and open rascal
+%1 make a clean copy of the model
+%2make it so you can seed it with 4 layers (3 slab 1 penetration)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % --- Executes during object creation, after setting all properties.
 function text11_CreateFcn(hObject, eventdata, handles)

@@ -1,0 +1,14 @@
+function plotter_for_linked_chain(chain_linked,sschain_linked)
+
+
+
+
+x = chain_linked(:,3)
+y = chain_linked(:,4)
+z = chain_linked(:,1)
+max_hydration = max(chain_linked(:,2);
+normalised = 
+
+plot3(x,y,z,'x', 'Color', [0 0 0])
+
+end

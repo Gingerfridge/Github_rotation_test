@@ -470,13 +470,104 @@ else
 cd(Working_directory);
 Message;
 handles.text13.String = Message;
-end
-
-handles.text13.String = Message;
+handles.pushbutton8.String = 'Please wait...';
 %%%% this will run the code
 % I should make it output some "important" loading information
 [Loading_roation,Loading_Slicer,Loading_SLD] = rotation_slice_SLD_profile(protein_nickname,protein_filename,Rotation_increment,Working_directory,D2O_frac);
+handles.text13.String = '';
+answer = questdlg('Would you like to open in RasCAL?', ...
+	'Dessert Menu', ...
+	'Yes','No','Cancel');
+% Handle response
+switch answer
+    case 'Yes'
+        disp([answer ' Loading...'])
+        handles.pushbutton8.String = 'Please wait...';
+        %%%% This needs to be for the user to choose where the location of
+        %%%% the file is.
 
+        % create a directory inside the working folder
+        working_directory = pwd;
+        cd(working_directory)
+        outputFolder = fullfile(working_directory, handles.edit5.String)
+        if ~exist(outputFolder, 'dir')
+            mkdir(outputFolder);
+        end
+        project_directory = fullfile(working_directory,handles.edit5.String)
+        Template_path = 'C:\Gromacs Work\Rotation_github_test\Github_rotation_test\Rascal_Template\Template';
+        
+        data_files_path = fullfile(project_directory, 'dataFiles')
+        if ~exist(data_files_path, 'dir')
+            mkdir(data_files_path);
+        end
+        
+        %copy and rename the defalut penetration file
+%         choose the folder containing the templpate!!!!!!
+        
+
+%%%%%%% Copy data files for an air water interface experiment
+        inputFullFileName = fullfile(Template_path, 'dataFiles', 'Fc 258 136027_136029_BG_SUB.dat');
+        outputFullFileName = fullfile(data_files_path, 'Fc 258 136027_136029_BG_SUB.dat');
+        % copy from the template to the new folder
+        copyfile(inputFullFileName, outputFullFileName)
+
+        inputFullFileName = fullfile(Template_path, 'dataFiles', 'Fc D2o 136036_136038_BG_SUB.dat');
+        outputFullFileName = fullfile(data_files_path, 'Fc D2o 136036_136038_BG_SUB.dat');
+        % copy from the template to the new folder
+        copyfile(inputFullFileName, outputFullFileName)
+ 
+        inputFullFileName = fullfile(Template_path, 'dataFiles', 'Fc h2o 135937_135939_BG_SUB.dat');
+        outputFullFileName = fullfile(data_files_path, 'Fc h2o 135937_135939_BG_SUB.dat');
+        % copy from the template to the new folder
+        copyfile(inputFullFileName, outputFullFileName)       
+        
+        inputFullFileName = fullfile(Template_path, 'dataFiles', 'Fc NRW 135975_135978_BG_SUB.dat');
+        outputFullFileName = fullfile(data_files_path, 'Fc NRW 135975_135978_BG_SUB.dat');
+        % copy from the template to the new folder
+        copyfile(inputFullFileName, outputFullFileName)
+%%%%%%% 
+        
+        
+        
+        
+        
+        inputFullFileName = fullfile(Template_path, 'Template.mat');
+        outputFullFileName = fullfile(project_directory, [handles.edit5.String '_Project.mat']);
+        % copy from the template to the new folder
+        copyfile(inputFullFileName, outputFullFileName)
+        
+        inputFullFileName = fullfile(Template_path, 'SLD_4_Rascal_with_slab_initiliser_roughness_NEW_GRO_SLICER.m');
+        outputFullFileName = fullfile(project_directory, ['SLD_4_Rascal_with_slab_initiliser_roughness_NEW_GRO_SLICER.m']);
+        % copy from the template to the new folder
+        copyfile(inputFullFileName, outputFullFileName)
+        
+        
+        
+        
+        cd('C:\Users\mbcx4ph5\Dropbox (The University of Manchester)\PhD\RasCAL_2019')
+        rascal
+
+        
+        problem = rLoadProblem(project_directory,[handles.edit5.String '_Project.mat']);
+        reSetProblem(problem);
+
+        %need to add code that opens Rascal here
+    case 'No'
+        disp(' Exiting...')
+    case 'Cancel'
+        disp(' Exiting...')
+        
+end
+end
+handles.pushbutton8.String = 'Run';
+        
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%this part should be what happens after the slicer finished
+%Ask the user if they would like to generage model and open rascal
+%1 make a clean copy of the model
+%2make it so you can seed it with 4 layers (3 slab 1 penetration)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % --- Executes during object creation, after setting all properties.
 function text11_CreateFcn(hObject, eventdata, handles)
