@@ -22,7 +22,7 @@ function varargout = Load_data_gui(varargin)
 
 % Edit the above text to modify the response to help Load_data_gui
 
-% Last Modified by GUIDE v2.5 30-Oct-2021 16:46:38
+% Last Modified by GUIDE v2.5 10-Nov-2021 13:54:32
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -70,7 +70,15 @@ for i = 1:length(handles.uitable3.Data)
     handles.uitable3.Data{i,2} = NaN;
 end
 
-
+set(handles.pushbutton9, 'visible','off')
+set(handles.Load_gro_file_pushbutton1, 'visible','off')
+set(handles.text6, 'visible','off')
+set(handles.text14, 'visible','off')
+set(handles.popupmenu2, 'Enable','off')	
+set(handles.edit5,'Enable','off')
+set(handles.pushbutton2,'Enable','off')
+set(handles.pushbutton10,'visible','off')
+set(handles.text15,'visible','off')
 %  UIWAIT makes Load_data_gui wait for user response (see UIRESUME)
 % uiwait(handles.figure1);
 
@@ -122,16 +130,39 @@ function Rotation_checkbox2_Callback(hObject, eventdata, handles) %%%%ROT
 % hObject    handle to Rotation_checkbox2 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
-
 % Hint: get(hObject,'Value') returns toggle state of Rotation_checkbox2
 Rotation_checkbox2 = get(hObject,'Value');
 if handles.Rotation_checkbox2.Value
     handles.text2.String = {'This fuction takes a Gro file and rotates it around the x and y axis outputs the SLD profiles for fitting in matlab etc.'};
+	set(handles.checkbox4,'Enable','off')
+    set(handles.pushbutton9, 'visible','off')
+    set(handles.Load_gro_file_pushbutton1, 'visible','on')
+    set(handles.text6, 'visible','on')
+    set(handles.text14, 'visible','off')
+    set(handles.popupmenu2, 'Enable','on')	
+    set(handles.edit5,'Enable','on')
+    set(handles.pushbutton2,'Enable','on')
+    set(handles.text5,'visible','on')
+
+    
+    
+    
+    
 end
 % If Checkbox B is selected, then the dropdown options would be A,B,C
 if ~handles.Rotation_checkbox2.Value
-    handles.text2.String = {'Tick the Rotation box to use this function'};
+    handles.text2.String = {'Tick the Rotation or Simulation box to use this function'};
+% %     set(handles.checkbox4, 'visible','off')
+	set(handles.checkbox4,'Enable','on')
+    set(handles.pushbutton9, 'visible','off')
+    set(handles.Load_gro_file_pushbutton1, 'visible','off')
+    set(handles.text6, 'visible','off')
+    set(handles.text14, 'visible','off')
+    set(handles.popupmenu2, 'Enable','off')	
+    set(handles.edit5,'Enable','off')
+    set(handles.pushbutton2,'Enable','off')
+    set(handles.text5,'visible','off')
+    set(handles.text5,'visible','off')
 end
 Run_colour_changer(handles)
 
@@ -238,6 +269,7 @@ function [filepath] = pushbutton2_Callback(hObject, eventdata, handles) %%%%ROT
 % hObject    handle to pushbutton2 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+
 [filepath] = uigetdir;
 handles.text5.String = {filepath};
 Run_colour_changer(handles)
@@ -473,7 +505,8 @@ handles.text13.String = Message;
 handles.pushbutton8.String = 'Please wait...';
 %%%% this will run the code
 % I should make it output some "important" loading information
-[Loading_roation,Loading_Slicer,Loading_SLD] = rotation_slice_SLD_profile(protein_nickname,protein_filename,Rotation_increment,Working_directory,D2O_frac);
+%[Loading_roation,Loading_Slicer,Loading_SLD] = rotation_slice_SLD_profile(protein_nickname,protein_filename,Rotation_increment,Working_directory,D2O_frac);
+%[Loading_Slicer,Loading_SLD] = simulation_slice_SLD_profile(protein_nickname,Working_directory,D2O_frac)
 handles.text13.String = '';
 answer = questdlg('Would you like to open in RasCAL?', ...
 	'Dessert Menu', ...
@@ -506,22 +539,22 @@ switch answer
         
 
 %%%%%%% Copy data files for an air water interface experiment
-        inputFullFileName = fullfile(Template_path, 'Fc 258 136027_136029_BG_SUB.dat');
+        inputFullFileName = fullfile(Template_path, 'dataFiles', 'Fc 258 136027_136029_BG_SUB.dat');
         outputFullFileName = fullfile(data_files_path, 'Fc 258 136027_136029_BG_SUB.dat');
         % copy from the template to the new folder
         copyfile(inputFullFileName, outputFullFileName)
 
-        inputFullFileName = fullfile(Template_path, 'Fc D2o 136036_136038_BG_SUB.dat');
+        inputFullFileName = fullfile(Template_path, 'dataFiles', 'Fc D2o 136036_136038_BG_SUB.dat');
         outputFullFileName = fullfile(data_files_path, 'Fc D2o 136036_136038_BG_SUB.dat');
         % copy from the template to the new folder
         copyfile(inputFullFileName, outputFullFileName)
  
-        inputFullFileName = fullfile(Template_path, 'Fc h2o 135937_135939_BG_SUB.dat');
+        inputFullFileName = fullfile(Template_path, 'dataFiles', 'Fc h2o 135937_135939_BG_SUB.dat');
         outputFullFileName = fullfile(data_files_path, 'Fc h2o 135937_135939_BG_SUB.dat');
         % copy from the template to the new folder
         copyfile(inputFullFileName, outputFullFileName)       
         
-        inputFullFileName = fullfile(Template_path, 'Fc NRW 135975_135978_BG_SUB.dat');
+        inputFullFileName = fullfile(Template_path, 'dataFiles', 'Fc NRW 135975_135978_BG_SUB.dat');
         outputFullFileName = fullfile(data_files_path, 'Fc NRW 135975_135978_BG_SUB.dat');
         % copy from the template to the new folder
         copyfile(inputFullFileName, outputFullFileName)
@@ -581,3 +614,161 @@ function text13_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to text13 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
+
+
+% --- Executes on button press in checkbox4.
+function checkbox4_Callback(hObject, eventdata, handles)
+% hObject    handle to checkbox4 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of checkbox4
+Simulation_checkbox4 = get(hObject,'Value');
+if handles.checkbox4.Value
+    handles.text2.String = {'This fuction takes a simulation and output gro files used to output the SLD profiles for fitting in matlab etc.'};
+    set(handles.Rotation_checkbox2,'Enable','off')
+
+    set(handles.pushbutton9, 'visible','off')
+    set(handles.Load_gro_file_pushbutton1, 'visible','off')
+    set(handles.text6, 'visible','off')
+    set(handles.text14, 'visible','off')
+    set(handles.popupmenu2, 'Enable','off')	
+    set(handles.edit5,'Enable','on')
+    set(handles.pushbutton2,'Enable','on')
+    set(handles.text5,'visible','on')
+    set(handles.pushbutton9,'visible','on') 
+    set(handles.text14,'visible','on') 
+    set(handles.pushbutton10,'visible','on')
+    set(handles.text15,'visible','on')
+        %%%%%% Time
+        set(handles.text16,'Enable','off')
+        set(handles.text17,'Enable','off') 
+        set(handles.text18,'Enable','off')
+        set(handles.edit6,'Enable','off')
+        set(handles.edit7,'Enable','off')  
+        set(handles.edit8,'Enable','off')  
+    
+    % add logic to change the load file boxes
+    
+    
+    
+    % %     set(handles.checkbox4, 'visible','on')
+end
+% If Checkbox B is selected, then the dropdown options would be A,B,C
+if ~handles.checkbox4.Value
+        set(handles.Rotation_checkbox2,'Enable','on')
+        handles.text2.String = {'Tick the Rotation or Simulation box to use this function'};
+        set(handles.pushbutton9, 'visible','off')
+        set(handles.Load_gro_file_pushbutton1, 'visible','off')
+        set(handles.text6, 'visible','off')
+        set(handles.text14, 'visible','off')
+        set(handles.popupmenu2, 'Enable','off')	
+        set(handles.edit5,'Enable','off')
+        set(handles.pushbutton2,'Enable','off')
+        set(handles.text5,'visible','off')
+        set(handles.pushbutton10,'visible','off')
+        %%%%%% Time
+        set(handles.text16,'Enable','off')
+        set(handles.text17,'Enable','off') 
+        set(handles.text18,'Enable','off')
+        set(handles.edit6,'Enable','off')
+        set(handles.edit7,'Enable','off')  
+        set(handles.edit8,'Enable','off')        
+% %     set(handles.checkbox4, 'visible','off')
+end
+Run_colour_changer(handles)
+
+
+
+% --- Executes on button press in pushbutton9.
+function pushbutton9_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton9 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --- Executes on button press in pushbutton10.
+function pushbutton10_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton10 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --- Executes during object creation, after setting all properties.
+function uipanel4_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to uipanel4 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+
+
+
+
+
+
+function edit6_Callback(hObject, eventdata, handles)
+% hObject    handle to edit6 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of edit6 as text
+%        str2double(get(hObject,'String')) returns contents of edit6 as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function edit6_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to edit6 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function edit7_Callback(hObject, eventdata, handles)
+% hObject    handle to edit7 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of edit7 as text
+%        str2double(get(hObject,'String')) returns contents of edit7 as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function edit7_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to edit7 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function edit8_Callback(hObject, eventdata, handles)
+% hObject    handle to edit8 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of edit8 as text
+%        str2double(get(hObject,'String')) returns contents of edit8 as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function edit8_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to edit8 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
