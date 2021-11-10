@@ -137,7 +137,7 @@ h = waitbar(0.02,'Saving data please wait');
 save('data.mat','data','-v7.3')
 
 h = waitbar(1,h,'COMPLETE')
-clo
+
 % YOU NOW HAVE A DATA STRUCT WITH THE sld PROFILE OF THE AMINO ACIDS FROM
 % YOUR GRO FILE 
 

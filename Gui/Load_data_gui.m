@@ -388,102 +388,217 @@ function pushbutton7_Callback(hObject, eventdata, handles)
 
 %this function works the logic of the file prep process
 function [Working_directory,Rotation_increment,protein_filename,protein_nickname,D2O_frac,Message,Working_boolean] = Function_check(handles)
-Working_boolean = 0;    
-handles.text5.String;
-Working_directory = handles.text5.String;
-D2O_frac = (1);
-Rotation_increment = str2double((handles.popupmenu2.String{handles.popupmenu2.Value,1})); % this should work for the rotation code
+%this function checks to see if everything is good to run 
+%need to add what is needed if the simulation box is ticked
+    if handles.checkbox4.Value
+    Working_boolean = 0;    
+    handles.text5.String;
+    Working_directory = handles.text5.String;
+    D2O_frac = (1);
+    Rotation_increment = str2double((handles.popupmenu2.String{handles.popupmenu2.Value,1})); % this should work for the rotation code
+    protein_filename = handles.text6.String;
+    protein_nickname = handles.edit5.String;
+    Message="first message";
+    %%%%%%%%%%%% need to add the logic for the simulation process!!!!!!!  
+         %Must selct folder
+    tf_Work_Folder = strcmp(handles.text5.String,'Select Work Folder');
+    tf_Work_Folder_2 = strcmp(handles.text5.String,'0');
+    if tf_Work_Folder
+        Message = "Select work folder";
+        %add not in the run section
+    else
+    if tf_Work_Folder_2
+        Message = "Select work folder";
+        %add not in the run section
+    else
+    
+        
+    tf_xtc_Name = strcmp(handles.text14.String,'Select .xtc File');   
+    tf_xtc_Name_2 = strcmp(handles.text14.String,'0');  
+    if tf_xtc_Name
+        Message = "Select .xtc file from in the folder selected";
+        %add not in the run section
+    else
+    if tf_xtc_Name_2
+        Message = "Select .xtc file from in the folder selected";
+        %add not in the run section
+    else  
 
-protein_filename = handles.text6.String;
-
-
-protein_nickname = handles.edit5.String;
-
-if ~handles.Rotation_checkbox2.Value
-    Message = "Check the rotation tickbox";
-    %add not in the run section
-else
-%Must selct folder
-tf_Work_Folder = strcmp(handles.text5.String,'Select Work Folder');
-tf_Work_Folder_2 = strcmp(handles.text5.String,'0');
-if tf_Work_Folder
-    Message = "Select work folder";
-    %add not in the run section
-else
-if tf_Work_Folder_2
-    Message = "Select work folder";
-    %add not in the run section
-else    
+    
+    tf_tpr_Name = strcmp(handles.text15.String,'Select .tpr File');   
+    tf_tpr_Name_2 = strcmp(handles.text15.String,'0');  
+    if tf_tpr_Name
+        Message = "Select .tpr file from in the folder selected";
+        %add not in the run section
+    else
+    if tf_tpr_Name_2
+        Message = "Select .tpr file from in the folder selected";
+        %add not in the run section
+    else  
+  
     
     
-%Must select gro file
-tf_Gro_Name = strcmp(handles.text6.String,'Select .gro File');   
-tf_Gro_Name_2 = strcmp(handles.text6.String,'0');  
-if tf_Gro_Name
-    Message = "Select .gro file from in the folder selected";
-    %add not in the run section
-else    
-if tf_Gro_Name_2
-    Message = "Select .gro file from in the folder selected";
-    %add not in the run section
-else 
-
-
-% must fill in the contrast
-D2O_frac = handles.uitable3.Data;
-for i =1:length(D2O_frac)
-    X(i,1) = D2O_frac{i,1};
-end
-
-X(isnan(X(:,1)),:) = [];
-
-D2O_frac = X;
-D2O_frac(isnan(D2O_frac(:,1)),:) = [];
-D2O_test_1 = isnumeric(D2O_frac);
-D2O_test_2 = isnan(D2O_frac);
-
-if D2O_test_1 == 0
-    Message = "Fill in D2O fraction table";
-else
-D2O_test_2i = isempty(D2O_test_2);
-D2O_test_2ii = all(D2O_test_2(:) == 0)  ;  
-
-if D2O_test_2i == 1
-    Message = "Fill in D2O fraction table";
-else
-
-if D2O_test_2ii ~= 1   
-    Message = "Fill in D2O fraction table";
-else
-
-Nick_Name_test_2 = isempty(handles.edit5.String);
-if Nick_Name_test_2
-    Message = "Please enter a name"
-else
     
-Nick_Name_test = any(regexp(handles.edit5.String,'[0-9]'))    
-if Nick_Name_test
-    Message = "NO NUMBERS in Name"
-else
-     
-Working_boolean = 1;    
-Message = "Running";
-handles.text5.String{1,1};
-Working_directory = handles.text5.String{1,1};
-Rotation_increment = str2double((handles.popupmenu2.String{handles.popupmenu2.Value,1})); % this should work for the rotation code
-protein_filename = handles.text6.String;
-protein_nickname = handles.edit5.String;
+    
+    
+    %%%%%% D2O logic testing
+    D2O_frac = handles.uitable3.Data;
+    for i =1:length(D2O_frac)
+        X(i,1) = D2O_frac{i,1};
+    end
 
-end
-end
-end
-end
-end
-end
-end
+    X(isnan(X(:,1)),:) = [];
+
+    D2O_frac = X;
+    D2O_frac(isnan(D2O_frac(:,1)),:) = [];
+    D2O_test_1 = isnumeric(D2O_frac);
+    D2O_test_2 = isnan(D2O_frac);
+
+    if D2O_test_1 == 0
+        Message = "Fill in D2O fraction table";
+    else
+    D2O_test_2i = isempty(D2O_test_2);
+    D2O_test_2ii = all(D2O_test_2(:) == 0)  ;  
+
+    if D2O_test_2i == 1
+        Message = "Fill in D2O fraction table";
+    else
+
+    if D2O_test_2ii ~= 1   
+        Message = "Fill in D2O fraction table";
+    else
+
+    %%%% add start and endtime logic here 14:58
+        
+        
+         
+        
+        
+    Nick_Name_test_2 = isempty(handles.edit5.String);
+    if Nick_Name_test_2
+        Message = "Please enter a name";
+    else
+
+    Nick_Name_test = any(regexp(handles.edit5.String,'[0-9]'))    ;
+    if Nick_Name_test
+        Message = "NO NUMBERS in Name";
+    else
+        
+    Message = "end message"    ;
+        
+        
+    end
+    end
+    end
+    end
+    end
+    % stack of ends for the logic
+    end
+    end
+    end
+    end             
+    end
+    end
+    end
+  
+  
+    
+    
+    
+    
+    if ~handles.checkbox4.Value
+    Working_boolean = 0;    
+    handles.text5.String;
+    Working_directory = handles.text5.String;
+    D2O_frac = (1);
+    Rotation_increment = str2double((handles.popupmenu2.String{handles.popupmenu2.Value,1})); % this should work for the rotation code
+    protein_filename = handles.text6.String;
+    protein_nickname = handles.edit5.String;
+
+    if ~handles.Rotation_checkbox2.Value
+        Message = "Check the rotation or simulation tickbox";
+        %add not in the run section
+    else
+    %Must selct folder
+    tf_Work_Folder = strcmp(handles.text5.String,'Select Work Folder');
+    tf_Work_Folder_2 = strcmp(handles.text5.String,'0');
+    if tf_Work_Folder
+        Message = "Select work folder";
+        %add not in the run section
+    else
+    if tf_Work_Folder_2
+        Message = "Select work folder";
+        %add not in the run section
+    else    
+    %Must select gro file
+    tf_Gro_Name = strcmp(handles.text6.String,'Select .gro File');   
+    tf_Gro_Name_2 = strcmp(handles.text6.String,'0');  
+    if tf_Gro_Name
+        Message = "Select .gro file from in the folder selected";
+        %add not in the run section
+    else    
+    if tf_Gro_Name_2
+        Message = "Select .gro file from in the folder selected";
+        %add not in the run section
+    else 
+    % must fill in the contrast
+    D2O_frac = handles.uitable3.Data;
+    for i =1:length(D2O_frac)
+        X(i,1) = D2O_frac{i,1};
+    end
+
+    X(isnan(X(:,1)),:) = [];
+
+    D2O_frac = X;
+    D2O_frac(isnan(D2O_frac(:,1)),:) = [];
+    D2O_test_1 = isnumeric(D2O_frac);
+    D2O_test_2 = isnan(D2O_frac);
+
+    if D2O_test_1 == 0
+        Message = "Fill in D2O fraction table";
+    else
+    D2O_test_2i = isempty(D2O_test_2);
+    D2O_test_2ii = all(D2O_test_2(:) == 0)  ;  
+
+    if D2O_test_2i == 1
+        Message = "Fill in D2O fraction table";
+    else
+
+    if D2O_test_2ii ~= 1   
+        Message = "Fill in D2O fraction table";
+    else
+
+    Nick_Name_test_2 = isempty(handles.edit5.String);
+    if Nick_Name_test_2
+        Message = "Please enter a name";
+    else
+
+    Nick_Name_test = any(regexp(handles.edit5.String,'[0-9]'))    
+    if Nick_Name_test
+        Message = "NO NUMBERS in Name";
+    else
+
+    Working_boolean = 1;    
+    Message = "Running";
+    handles.text5.String{1,1};
+    Working_directory = handles.text5.String{1,1};
+    Rotation_increment = str2double((handles.popupmenu2.String{handles.popupmenu2.Value,1})); % this should work for the rotation code
+    protein_filename = handles.text6.String;
+    protein_nickname = handles.edit5.String;
+    end
+    end
+    end
+    end
+    end
+    end
+    end
+    end % 
+    end % 
+    end
 end % 
-end % 
-end % 
+
+
+
 
 function Run_colour_changer(handles)
 [Working_directory,Rotation_increment,protein_filename,protein_nickname,D2O_frac,Message,Working_boolean] = Function_check(handles)
@@ -516,11 +631,15 @@ handles.text13.String = Message;
 handles.pushbutton8.String = 'Please wait...';
 %%%% this will run the code
 % I should make it output some "important" loading information
-%[Loading_roation,Loading_Slicer,Loading_SLD] = rotation_slice_SLD_profile(protein_nickname,protein_filename,Rotation_increment,Working_directory,D2O_frac);
-%[Loading_Slicer,Loading_SLD] = simulation_slice_SLD_profile(protein_nickname,Working_directory,D2O_frac)
+if handles.Rotation_checkbox2.Value 
+    [Loading_roation,Loading_Slicer,Loading_SLD] = rotation_slice_SLD_profile(protein_nickname,protein_filename,Rotation_increment,Working_directory,D2O_frac);
+end
+if handles.checkbox4.Value
+    [Loading_Slicer,Loading_SLD] = simulation_slice_SLD_profile(protein_nickname,Working_directory,D2O_frac)
+end
 handles.text13.String = '';
 answer = questdlg('Would you like to open in RasCAL?', ...
-	'Dessert Menu', ...
+	'Rascal Menu', ...
 	'Yes','No','Cancel');
 % Handle response
 switch answer
@@ -697,6 +816,10 @@ function pushbutton9_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton9 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+[filename,filepath] = uigetfile({'*.xtc';'*.*'});
+fullname = [filepath filename] ;
+handles.text14.String = {filename};
+Run_colour_changer(handles)
 
 
 % --- Executes on button press in pushbutton10.
@@ -704,7 +827,10 @@ function pushbutton10_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton10 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
+[filename,filepath] = uigetfile({'*.tpr';'*.*'});
+fullname = [filepath filename] ;
+handles.text15.String = {filename};
+Run_colour_changer(handles)
 
 % --- Executes during object creation, after setting all properties.
 function uipanel4_CreateFcn(hObject, eventdata, handles)
