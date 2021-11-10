@@ -29,8 +29,12 @@ data.D2O_frac = D2O_frac; %%%% ADD which contrasts you have here (this will make
 
 
 % no surface required
-
+% if rotation run this 
 [height_protein, List_of_files, List_of_files_rot, Loading_roation, Output0] = rotation_of_protein_gro(data.step_rot_x,data.step_rot_y,data.protein_filename,data.protein_nickname,data.surface_filename,data.surface_nickname,orientation_seed)
+% if simulation run this 
+% dont forget that the fitting will be different (naming based on the z
+% value 
+
 
 save('height_protein.mat','height_protein')
 save('List_of_files.mat','List_of_files')
