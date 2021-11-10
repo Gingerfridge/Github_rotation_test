@@ -1,6 +1,7 @@
 function [Loading_roation,Loading_Slicer,Loading_SLD] = rotation_slice_SLD_profile(protein_nickname,protein_filename,Rotation_increment,Working_directory,D2O_frac)
 % order of running
-
+%05/11/21 Plan is to add simulation capability (rename z offset to make it
+%so it is a frame reader (check vmd for the format it outputs files)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %      MOVE TO THE DIRECTORY WITH YOUR SURFACE AND PROTEIN      %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -10,7 +11,9 @@ function [Loading_roation,Loading_Slicer,Loading_SLD] = rotation_slice_SLD_profi
 
 % once you have the gro files you want to analyse
 % % % % % %  no output list height_protein = rotation_of_protein_gro(step_rot_x,step_rot_y,protein_filename,protein_nickname,surface_filename,surface_nickname) %% all gro files
-orientation_seed = seed_rotation(Rotation_increment); % angle between gro files in x rotation and y
+start = 0;
+finish = 180;
+orientation_seed = seed_rotation(Rotation_increment,start,finish); % angle between gro files in x rotation and y
 Working_directory;
 data.protein_filename = protein_filename;
 
