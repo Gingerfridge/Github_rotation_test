@@ -1,4 +1,4 @@
-function [Loading_Slicer,Loading_SLD] = simulation_slice_SLD_profile(protein_nickname,Working_directory,D2O_frac)
+function [Loading_Slicer,Loading_SLD] = simulation_slice_SLD_profile(protein_nickname,Working_directory,D2O_frac,tpr_name,xtc_name,start_time,end_time,time_step)
 % order of running
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -24,11 +24,6 @@ data.step_rot_x = 180;
 data.step_rot_y = 180;
 data.D2O_frac = D2O_frac; %%%% ADD which contrasts you have here (this will make it run much longer
 
-start_time = 0
-end_time = 250
-time_step =50
-xtc_name = "Job_23_md_0_10.xtc"
-tpr_name = "Job_23_md_0_10.tpr"
 
 [list,list_rot] = simulation_frame_producer(0,250,50,"Job_23_md_0_10.xtc","Job_23_md_0_10.tpr","COE3_test")
 % no surface required

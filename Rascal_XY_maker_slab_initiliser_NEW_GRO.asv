@@ -23,7 +23,6 @@ hydration = params(starting_params_number);
 Z_offset = params(starting_params_number+1); %removes surface etc.
 X_rot = params(starting_params_number+2);
 Y_rot = params(starting_params_number+3);
-Z_rot = params(starting_params_number+5);
 Penetration = params(starting_params_number-4);
 Penetration_layer_length = params(starting_params_number-4);
 
@@ -38,10 +37,6 @@ for i = 1:length(List_of_files_rot)
     test_y(1,i) = List_of_files_rot{1,i}(1,2);
 end
 
-for i = 1:length(List_of_files_rot)
-    test_z(1,i) = List_of_files_rot{1,i}(1,3);
-end
-
 dist_x    = abs(test_x - X_rot);
 minDist_x = min(dist_x);
 minIdx_x  = (dist_x == minDist_x);
@@ -52,13 +47,9 @@ minDist_y = min(dist_y);
 minIdx_y  = (dist_y == minDist_y);
 minVal_y  = test_y(minIdx_y);
 
-dist_z    = abs(test_z - Z_rot);
-minDist_z = min(dist_z);
-minIdx_z  = (dist_z == minDist_z);
-minVal_z  = test_z(minIdx_z);
 
 
-Best_index = minIdx_y & minIdx_x & minIdx_z;
+Best_index = minIdx_y & minIdx_x;
 %index of the rotated protein being used VERY IMPORTANT
 State_Number = find(Best_index,1,'first');
 

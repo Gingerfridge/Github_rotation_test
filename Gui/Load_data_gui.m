@@ -387,9 +387,13 @@ function pushbutton7_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 %this function works the logic of the file prep process
-function [Working_directory,Rotation_increment,protein_filename,protein_nickname,D2O_frac,Message,Working_boolean] = Function_check(handles)
+function [Working_directory,Rotation_increment,protein_filename,protein_nickname,D2O_frac,Message,Working_boolean,start_time,end_time,time_step,tpr_name,xtc_name] = Function_check(handles)
 %this function checks to see if everything is good to run 
 %need to add what is needed if the simulation box is ticked
+    start_time =0 
+    end_time = 100
+    time_step = 10
+
     if handles.checkbox4.Value
     Working_boolean = 0;    
     handles.text5.String;
@@ -469,10 +473,25 @@ function [Working_directory,Rotation_increment,protein_filename,protein_nickname
     else
 
     %%%% add start and endtime logic here 14:58
-        
-        
-         
-        
+    start_time = str2double(handles.edit6.String)
+    end_time = str2double(handles.edit7.String)     
+    time_step = str2double(handles.edit8.String)   
+    
+    time_test_1 = end_time <= start_time
+    time_test_2 = (end_time-start_time)/time_step
+    
+    
+    if time_test_1
+        Message = "End time should be greater then the start time";
+    else
+    
+%     if time_test_2 
+%         Message = "End time should be greater then the start time"
+%     else    
+
+    
+    %make sure they are all numbers
+    
         
     Nick_Name_test_2 = isempty(handles.edit5.String);
     if Nick_Name_test_2
@@ -484,9 +503,18 @@ function [Working_directory,Rotation_increment,protein_filename,protein_nickname
         Message = "NO NUMBERS in Name";
     else
         
-    Message = "end message"    ;
-        
-        
+    
+    Working_boolean = 1;    
+    Message = "Running";    
+    Working_directory = handles.text5.String{1,1};
+    tpr_name = handles.text15.String{1,1}
+    xtc_name = handles.text14.String{1,1}
+    start_time = str2double(handles.edit6.String)
+    end_time = str2double(handles.edit7.String)
+    time_step = str2double(handles.edit8.String)
+    
+    
+    end    
     end
     end
     end
@@ -500,7 +528,7 @@ function [Working_directory,Rotation_increment,protein_filename,protein_nickname
     end
     end
     end
-  
+
   
     
     
@@ -573,14 +601,14 @@ function [Working_directory,Rotation_increment,protein_filename,protein_nickname
         Message = "Please enter a name";
     else
 
-    Nick_Name_test = any(regexp(handles.edit5.String,'[0-9]'))    
+    Nick_Name_test = any(regexp(handles.edit5.String,'[0-9]'));    
     if Nick_Name_test
         Message = "NO NUMBERS in Name";
     else
 
     Working_boolean = 1;    
     Message = "Running";
-    handles.text5.String{1,1};
+    handles.text5.String{1,1}
     Working_directory = handles.text5.String{1,1};
     Rotation_increment = str2double((handles.popupmenu2.String{handles.popupmenu2.Value,1})); % this should work for the rotation code
     protein_filename = handles.text6.String;
@@ -601,7 +629,7 @@ end %
 
 
 function Run_colour_changer(handles)
-[Working_directory,Rotation_increment,protein_filename,protein_nickname,D2O_frac,Message,Working_boolean] = Function_check(handles)
+[Working_directory,Rotation_increment,protein_filename,protein_nickname,D2O_frac,Message,Working_boolean,start_time,end_time,time_step,tpr_name,xtc_name] = Function_check(handles);
 if Working_boolean == 1
     set(handles.pushbutton8, 'BackgroundColor', [0.47 0.67 0.19]);
     handles.text13.String = '';
@@ -620,7 +648,7 @@ function pushbutton8_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 %Must tick box
-[Working_directory,Rotation_increment,protein_filename,protein_nickname,D2O_frac,Message,Working_boolean] = Function_check(handles);
+[Working_directory,Rotation_increment,protein_filename,protein_nickname,D2O_frac,Message,Working_boolean,start_time,end_time,time_step,tpr_name,xtc_name] = Function_check(handles);
 if Working_boolean == 0
 Message;
 handles.text13.String = Message;
@@ -635,7 +663,7 @@ if handles.Rotation_checkbox2.Value
     [Loading_roation,Loading_Slicer,Loading_SLD] = rotation_slice_SLD_profile(protein_nickname,protein_filename,Rotation_increment,Working_directory,D2O_frac);
 end
 if handles.checkbox4.Value
-    [Loading_Slicer,Loading_SLD] = simulation_slice_SLD_profile(protein_nickname,Working_directory,D2O_frac)
+    [Loading_Slicer,Loading_SLD] = simulation_slice_SLD_profile(protein_nickname,Working_directory,D2O_frac,tpr_name,xtc_name,start_time,end_time,time_step)
 end
 handles.text13.String = '';
 answer = questdlg('Would you like to open in RasCAL?', ...
