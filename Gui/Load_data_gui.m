@@ -390,10 +390,11 @@ function pushbutton7_Callback(hObject, eventdata, handles)
 function [Working_directory,Rotation_increment,protein_filename,protein_nickname,D2O_frac,Message,Working_boolean,start_time,end_time,time_step,tpr_name,xtc_name] = Function_check(handles)
 %this function checks to see if everything is good to run 
 %need to add what is needed if the simulation box is ticked
-    start_time =0 
-    end_time = 100
-    time_step = 10
-
+    start_time = 0;
+    end_time = 100;
+    time_step = 10;
+    tpr_name = handles.text15.String;
+    xtc_name = handles.text14.String;
     if handles.checkbox4.Value
     Working_boolean = 0;    
     handles.text5.String;

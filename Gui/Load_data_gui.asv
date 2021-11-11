@@ -387,13 +387,14 @@ function pushbutton7_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 %this function works the logic of the file prep process
-function [Working_directory,Rotation_increment,protein_filename,protein_nickname,D2O_frac,Message,Working_boolean,start_time,end_time,time_step,tpr_name,xtc_name,start_time,end_time,time_step] = Function_check(handles)
+function [Working_directory,Rotation_increment,protein_filename,protein_nickname,D2O_frac,Message,Working_boolean,start_time,end_time,time_step,tpr_name,xtc_name] = Function_check(handles)
 %this function checks to see if everything is good to run 
 %need to add what is needed if the simulation box is ticked
     start_time =0 
     end_time = 100
     time_step = 10
-
+    tpr_name = 
+    xtc_name = 
     if handles.checkbox4.Value
     Working_boolean = 0;    
     handles.text5.String;
@@ -508,6 +509,11 @@ function [Working_directory,Rotation_increment,protein_filename,protein_nickname
     Message = "Running";    
     Working_directory = handles.text5.String{1,1};
     tpr_name = handles.text15.String{1,1}
+    xtc_name = handles.text14.String{1,1}
+    start_time = str2double(handles.edit6.String)
+    end_time = str2double(handles.edit7.String)
+    time_step = str2double(handles.edit8.String)
+    
     
     end    
     end
@@ -624,7 +630,7 @@ end %
 
 
 function Run_colour_changer(handles)
-[Working_directory,Rotation_increment,protein_filename,protein_nickname,D2O_frac,Message,Working_boolean,start_time,end_time,time_step] = Function_check(handles);
+[Working_directory,Rotation_increment,protein_filename,protein_nickname,D2O_frac,Message,Working_boolean,start_time,end_time,time_step,tpr_name,xtc_name] = Function_check(handles);
 if Working_boolean == 1
     set(handles.pushbutton8, 'BackgroundColor', [0.47 0.67 0.19]);
     handles.text13.String = '';
@@ -643,7 +649,7 @@ function pushbutton8_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 %Must tick box
-[Working_directory,Rotation_increment,protein_filename,protein_nickname,D2O_frac,Message,Working_boolean,start_time,end_time,time_step] = Function_check(handles);
+[Working_directory,Rotation_increment,protein_filename,protein_nickname,D2O_frac,Message,Working_boolean,start_time,end_time,time_step,tpr_name,xtc_name] = Function_check(handles);
 if Working_boolean == 0
 Message;
 handles.text13.String = Message;
