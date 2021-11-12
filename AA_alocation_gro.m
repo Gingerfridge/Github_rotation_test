@@ -5,7 +5,7 @@ AA_Names = upper(SL(:,10));
 % produce a logic matrix for the AA 20by number of residues
 number_of_residues = size(average_z_res);
 for i = 1:number_of_residues(1,1)
-    Res_Name(1:20,1) = Residues{i,2};
+    Res_Name(1:20,1) = convertCharsToStrings(Residues{i,2});
         Logic_matrix = strcmp(AA_Names,Res_Name);
         Grand_Logic_Matrix(i,1:20) = Logic_matrix;
 end
